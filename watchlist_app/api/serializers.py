@@ -18,3 +18,19 @@ class MovieSerializer(serializers.Serializer):
         instance.active = validated_data.get("active", instance.active)
         instance.save()
         return instance
+
+    # validation of name field - filed level validation
+    def validate_name(self, value):
+        if len(value) < 4:
+            raise serializers.ValidationError("Name is too shor!")
+        else:
+            return value
+
+    # object level validation
+    def validate(self, data):
+        if data["name"] == data["description"]:
+            raise serializers.ValidationError(
+                "Name and Description should not be different!"
+            )
+        else:
+            return data
