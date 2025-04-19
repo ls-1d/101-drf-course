@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class StreamPlatform(models.Model):
@@ -21,3 +22,19 @@ class Watchlist(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Review(models.Model):
+    rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    description = models.CharField(max_length=200, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+    watchlist = models.ForeignKey(
+        Watchlist, on_delete=models.CASCADE, related_name="reviews"
+    )
+
+    def __str__(self):
+        return str(self.rating) + " | " + self.watchlist.title
